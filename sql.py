@@ -52,11 +52,14 @@ def insert_into_db (file, data):
 
 def populate_db():
     list_of_tables = [name for name in os.listdir('data') if re.search('\.tsv$', name)]
+    entities = input("Number of entities to load in database: ")
     for table_file in list_of_tables:
         with open (os.path.join('data', table_file)) as tsvfile:
             reader = csv.DictReader(tsvfile, dialect='excel-tab')
             for row in reader:
+                if entites == 0: break
                 for key in row:
                     if row[key] == "\\N":
                         row[key] = None
                 insert_into_db (table_file, row)
+                entities -= 1

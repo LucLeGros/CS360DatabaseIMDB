@@ -35,8 +35,6 @@ create table episode (
    'parent' text not null,
    'season_number' tinyint,
    'episode_number'smallint,
-   --Below feels like bad design feel free to fix - Nick
-   -- media includes both tconst for episodes and whole series
    foreign key (tconst) references media(tconst),
    foreign key (parent) references media(tconst)
 );
@@ -53,5 +51,60 @@ create table alternate_titles (
    'types' text,
    'attributes' text,
    'is_original' boolean,
+   foreign key (tconst) references media(tconst)
+);
+
+-- Crew entity in ER Diagram
+-- Data from title.principals.tsv.gz
+drop table if exists crew;
+create table crew (
+   'tconst' text not null,
+   'ordering' tinyint not null,
+   'nconst' text not null,
+   'category' text,
+   'job' text,
+   primary key (tconst, nconst),
+   foreign key (tconst) references media(tconst),
+   foreign key (nconst) references person(nconst)
+);
+
+-- Characters composite attribute
+-- Uses data from title.principals.tsv.gz
+drop table if exists character;
+create table character (
+   'nconst' text not null,
+   'tconst' text not null,
+   'character' text not null,
+   foreign key (tconst, nconst) references crew(tconst, nconst)
+);
+
+-- Person entity in ER diagram
+-- Data from name.tsv
+drop table if exists person;
+create table person (
+   'nconst' primary key not null,
+   'primary_name' text not null,
+   'birth_year' smallint,
+   'death_year' smallint
+);
+
+-- Profession composite attribute
+-- Data from name.tsv
+drop table if exists profession;
+create table profession (
+   'nconst' not null,
+   'profession' text not null,
+   primary key (nconst, profession),
+   foreign key (nconst) references person(nconst)
+);
+
+--Known For Composite Attribute
+-- Data from name.tsv
+drop table if exists known_for;
+create table known_for (
+   'nconst' not null,
+   'tconst' not null,
+   primary key (nconst, tconst),
+   foreign key (nconst) references person(nconst),
    foreign key (tconst) references media(tconst)
 );
