@@ -9,6 +9,20 @@ def get_entities ():
         print("Input incorrect --- Usage: <integer>")
         return get_entities()
     return int(value)
+
+#Function to get data from directory
+#------------------ CHANGE IF DATA RETRIEVAL CHANGES ----------
+def get_data ():
+    #Retrieve list of data files
+    tables = [name for name in os.listdir('data') if re.search('\.tsv$', name)]
+    #Reorder to reflect functional dependency of input transactions:
+    #Ratings can only occur after basic
+    tables = sorted(tables)
+    #Name can only occur after principals
+    tables[tables.index("principals.tsv")], tables[tables.index("name.tsv")] \
+    = tables[tables.index("name.tsv")], tables[tables.index("principals.tsv")]
+    return tables
+
 #Connect to database
 def get_db():
     db = sqlite3.connect('cs360_ass2.db')
@@ -87,13 +101,13 @@ def insert_into_db (file, data):
 
 def populate_db():
     load_limit = get_entities()
-    for table_file in [name for name in os.listdir('data') if re.search('\.tsv$', name)]:
+    for table in get_data():
         entities = load_limit
-        with open (os.path.join('data', table_file)) as tsvfile:
+        with open (os.path.join('data', table)) as tsvfile:
             for row in csv.DictReader(tsvfile, dialect='excel-tab'):
                 if entities == 0: break
                 for key in row:
                     if row[key] == "\\N":
                         row[key] = None
-                insert_into_db (table_file, row)
+                insert_into_db (table, row)
                 entities -= 1
