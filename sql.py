@@ -2,6 +2,13 @@
 #Code for creating and populating sql database
 import sqlite3, csv, os, re
 
+#Input sanitisation function
+def get_entities ():
+    value = input("Number of entities to load in database: ")
+    if not value.isdigit():
+        print("Input incorrect --- Usage: <integer>")
+        return get_entities()
+    return int(value)
 #Connect to database
 def get_db():
     db = sqlite3.connect('cs360_ass2.db')
@@ -18,17 +25,16 @@ def init_db():
 def insert_into_db (file, data):
     db = get_db()
     if file == "basics.tsv":
-        # Insert into media table
+        #Insert into media table
         db.cursor().execute('INSERT INTO media VALUES (?, ?, ?, ?, ?, ?, ?,?,?,?)',\
         (data.get("tconst"), data.get("titleType"), data.get("primaryTitle"),\
          data.get("originalTitle"), data.get("isAdult"), data.get("startYear"),\
          data.get("endYear"), data.get("runtimeMinutes"), None, None))
         db.commit()
-        # Insert into genre table
+        #Insert into genres table
         if data.get("genres") is not None:
-            genre_list = data.get("genres").split(",")
-            for genre in genre_list:
-                db.cursor().execute ("INSERT INTO genre VALUES (?, ?)", \
+            for genre in data.get("genres").split(","):
+                db.cursor().execute ("INSERT INTO genres VALUES (?, ?)", \
                 (data.get("tconst"), genre))
                 db.commit()
     elif file == "ratings.tsv":
@@ -44,20 +50,48 @@ def insert_into_db (file, data):
          data.get("isOriginalTitle")))
         db.commit()
     elif file == "episode.tsv":
-        #insert into episode table
-        db.cursor().execute('INSERT INTO episode VALUES (?, ?, ?, ?)',\
+        #Insert into episodes table
+        db.cursor().execute('INSERT INTO episodes VALUES (?, ?, ?, ?)',\
         (data.get("tconst"), data.get("parentTconst"), data.get("seasonNumber"),\
          data.get("episodeNumber")))
         db.commit()
+    elif file == "principals.tsv":
+        #Insert into crew, characters tables
+        #Insert into crew
+        db.cursor().execute('INSERT INTO crew VALUES (?, ?, ?, ?, ?, ?)', \
+        (data.get("tconst"), data.get("ordering"), data.get("nconst"),\
+        data.get("category"), data.get("job"), False))
+        db.commit()
+        #Insert into characters
+        if data.get("characters") is not None:
+            for role in eval(data.get("characters")):
+                db.cursor().execute('INSERT INTO characters VALUES (?, ?, ?)',\
+                (data.get("tconst"), data.get("nconst"), role))
+                db.commit()
+    elif file == "name.tsv":
+        #Insert into person, crew, professions tables
+        #Insert into person
+        db.cursor().execute('INSERT INTO person VALUES (?, ?, ?, ?)',\
+        (data.get("nconst"), data.get("primaryName"), data.get("birthYear"),\
+        data.get("deathYear")))
+        db.commit()
+        #Insert into professions table (for professions composite attribute)
+        for job in data.get("primaryProfession").split(","):
+            db.cursor().execute('INSERT INTO professions VALUES (?, ?)',\
+            (data.get("nconst"), job))
+            db.commit()
+        #Update crew table to reflect roles person is known for
+        for title in data.get("knownForTitles").split(","):
+            db.cursor().execute('UPDATE crew SET known_for = ? WHERE tconst = ?', (True, title))
+            db.commit()
 
 def populate_db():
-    list_of_tables = [name for name in os.listdir('data') if re.search('\.tsv$', name)]
-    entities = input("Number of entities to load in database: ")
-    for table_file in list_of_tables:
+    load_limit = get_entities()
+    for table_file in [name for name in os.listdir('data') if re.search('\.tsv$', name)]:
+        entities = load_limit
         with open (os.path.join('data', table_file)) as tsvfile:
-            reader = csv.DictReader(tsvfile, dialect='excel-tab')
-            for row in reader:
-                if entites == 0: break
+            for row in csv.DictReader(tsvfile, dialect='excel-tab'):
+                if entities == 0: break
                 for key in row:
                     if row[key] == "\\N":
                         row[key] = None
