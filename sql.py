@@ -52,8 +52,9 @@ def insert_into_db (file, data):
 
 def populate_db():
     list_of_tables = [name for name in os.listdir('data') if re.search('\.tsv$', name)]
+    print(list_of_tables)
     for table_file in list_of_tables:
-        with open (os.path.join('data', table_file)) as tsvfile:
+        with open (os.path.join('data', table_file), encoding='utf-8') as tsvfile:
             reader = csv.DictReader(tsvfile, dialect='excel-tab')
             for row in reader:
                 for key in row:

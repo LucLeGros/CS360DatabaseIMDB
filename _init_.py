@@ -5,3 +5,4 @@ from sql import init_db, populate_db
 #Initialise and populate database
 init_db()
 populate_db()
+print("database populated")
