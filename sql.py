@@ -27,6 +27,7 @@ def get_data ():
 def get_db():
     db = sqlite3.connect('cs360_ass2.db')
     db.row_factory = sqlite3.Row
+    db.execute('pragma foreign_keys')
     return db
 
 #Initialise database using schema
@@ -66,6 +67,7 @@ def insert_into_db (file, data, db):
     elif file == "principals.tsv":
         #Insert into crew, characters tables
         #Insert into crew
+        #print(data)
         db.cursor().execute('INSERT INTO crew VALUES (?, ?, ?, ?, ?, ?)', \
         (data.get("tconst"), data.get("ordering"), data.get("nconst"),\
         data.get("category"), data.get("job"), False))

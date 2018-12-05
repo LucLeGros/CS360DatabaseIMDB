@@ -66,7 +66,6 @@ create table crew (
    'category' text,
    'job' text,
    'known_for' boolean,
-   primary key (tconst, nconst),
    foreign key (tconst) references media(tconst),
    foreign key (nconst) references person(nconst)
 );
