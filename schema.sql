@@ -57,7 +57,6 @@ create table alternate_titles (
 -- Crew entity in ER Diagram
 -- Data from title.principals.tsv.gz
 -- Includes information if this actor is known for this role
--- Boolean data from name.tsv.gz
 drop table if exists crew;
 create table crew (
    'tconst' text not null,
@@ -65,7 +64,6 @@ create table crew (
    'nconst' text not null,
    'category' text,
    'job' text,
-   'known_for' boolean,
    foreign key (tconst) references media(tconst),
    foreign key (nconst) references person(nconst)
 );
@@ -84,7 +82,7 @@ create table characters (
 -- Data from name.tsv.gz
 drop table if exists person;
 create table person (
-   'nconst' primary key not null,
+   'nconst' text primary key not null,
    'primary_name' text not null,
    'birth_year' smallint,
    'death_year' smallint
@@ -97,4 +95,13 @@ create table professions (
    'nconst' not null,
    'profession' text not null,
    foreign key (nconst) references person(nconst)
+);
+
+--Table that lists names and movie titles for movies actors are known for
+--Faster to insert into than boolean value
+drop table if exists known_for;
+create table known_for (
+   'nconst' text not null,
+   'tconst' text not null,
+   foreign key (nconst, tconst) references crew (nconst, tconst)
 );
