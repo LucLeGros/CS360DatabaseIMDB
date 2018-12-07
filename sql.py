@@ -93,7 +93,7 @@ def insert_into_db (file, data, db):
 def populate_db ():
     db = get_db()
     for table in get_data():
-        with open (os.path.join('data', table)) as tsvfile:
+        with open (os.path.join('data', table), encoding='utf-8') as tsvfile:
             for row in csv.DictReader(tsvfile, dialect='excel-tab', quoting=csv.QUOTE_NONE):
                 for key in row:
                     if row[key] == "\\N":
