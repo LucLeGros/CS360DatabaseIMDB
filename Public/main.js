@@ -11,13 +11,7 @@ $(".container").mapael({
 });
 
 function onclick(e, id, mapElem, textElem) {
-	    var newData = {
-            'areas': $(".container").data('mapael').areas
-        };
-        Object.keys(newData.areas).forEach(key => {
-            var value = newData.areas[key];
-             value.attrs = {fill: "#000088"}
-        });
+	    //getMapFilmDensity().then()
         
 
         
@@ -28,18 +22,40 @@ function computeMapFilmDensity(map){
     var newData = {
             'areas': $(".container").data('mapael').areas
         };
+    var filmArayNumber = getMapFilmDensity()
+    //var maxFilms = 
     Object.keys(newData.areas).forEach(key => {
             var value = newData.areas[key];
-            value.attrs = {fill: "#880000"}
+            value.attrs = {fill: getColor()}
         });
     $(".container").trigger('update', [{mapOptions: newData}]);
 }
-window.onload = computeMapFilmDensity 
+//window.onload = computeMapFilmDensity 
 
+//creates color that ranges from white to blue (blue is high film density)
 function getColor(numberOfFilms,maxFilms){//we will assume the min film is 0 which is probably the case
     var blue = "ff";
-    var redGreenGradient = Math.round(numberOfFilms/maxFilms)
-    return "" + redGreenGradient + redGreenGradient + blue//"" at the begining so we get "1111ff" and not "22ff" 
+    var redGreenGradient = (Math.round((maxFilms-numberOfFilms)/maxFilms)*15).toString(16)//0 to f
+
+    return "#" + redGreenGradient + redGreenGradient + blue//format is: "#xxxxff with x ranges from 0 to f
+}
+
+function getMapFilmDensity(){
+
+}
+
+function getFilmForCountry(){
+
+}
+
+function populate(filmsForCountry){
+    var text = ""
+    for(var i = 0; i < filmsForCountry.length; ++i){
+        var film = filmsForCountry[i] + '\n'
+        text += film
+    }
+    document.getElementById("films").value = text;
+    document.getElementById("films").readOnly = true;
 }
 
 

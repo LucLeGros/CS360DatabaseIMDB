@@ -1,0 +1,13 @@
+
+#films {
+  border-style: outset;
+  border-width: medium;
+  border-color: green;
+  height: 20%;
+   width: 40%;
+}
+
+#mapael {
+    height: 20%;
+    width: 100%;
+}
