@@ -25,7 +25,7 @@ def get_data ():
 
 #Connect to database
 def get_db():
-    db = sqlite3.connect('cs360_ass2.db')
+    db = sqlite3.connect('cs360_ass2_min.db')
     db.row_factory = sqlite3.Row
     db.execute('pragma foreign_keys')
     return db
@@ -68,9 +68,9 @@ def insert_into_db (file, data, db):
         #Insert into crew, characters tables
         #Insert into crew
         #print(data)
-        db.cursor().execute('INSERT INTO crew VALUES (?, ?, ?, ?, ?, ?)', \
+        db.cursor().execute('INSERT INTO crew VALUES (?, ?, ?, ?, ?)', \
         (data.get("tconst"), data.get("ordering"), data.get("nconst"),\
-        data.get("category"), data.get("job"), False))
+        data.get("category"), data.get("job")))
         #Insert into characters
         if data.get("characters") is not None:
             for role in eval(data.get("characters")):
@@ -83,21 +83,29 @@ def insert_into_db (file, data, db):
         (data.get("nconst"), data.get("primaryName"), data.get("birthYear"),\
         data.get("deathYear")))
         #Insert into professions table (for professions composite attribute)
-        for job in data.get("primaryProfession").split(","):
-            db.cursor().execute('INSERT INTO professions VALUES (?, ?)',\
-            (data.get("nconst"), job))
+        if data.get("primaryProfession") is not None:
+            for job in data.get("primaryProfession").split(","):
+                db.cursor().execute('INSERT INTO professions VALUES (?, ?)',\
+                (data.get("nconst"), job))
         #Update crew table to reflect roles person is known for
-        for title in data.get("knownForTitles").split(","):
-            db.cursor().execute('UPDATE crew SET known_for = ? WHERE tconst = ?', (True, title))
-
+        if data.get("knownForTitles") is not None:
+            for title in data.get("knownForTitles").split(","):
+                db.cursor().execute('INSERT INTO known_for VALUES (?, ?)',\
+                (title, data.get("nconst")))
+#db.cursor().execute('UPDATE crew SET known_for = ? WHERE tconst = ? AND nconst = ?', (True, title, data.get("nconst")))
 
 def populate_db ():
     db = get_db()
     for table in get_data():
+        print("Loading", table, "....")
+        limit = 0
         with open (os.path.join('data', table), encoding='utf-8') as tsvfile:
             for row in csv.DictReader(tsvfile, dialect='excel-tab', quoting=csv.QUOTE_NONE):
                 for key in row:
                     if row[key] == "\\N":
                         row[key] = None
+                limit += 1
                 insert_into_db (table, row, db)
+                if limit == 150000:
+                    break
         db.commit()

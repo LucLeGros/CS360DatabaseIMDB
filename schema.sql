@@ -19,8 +19,8 @@ create table media (
 
 -- Genre composite attribute
 -- Data from title.basics.tsv.gz
-drop table if exists genre;
-create table genre (
+drop table if exists genres;
+create table genres (
    'tconst' text not null,
    'genre' text not null,
    primary key (tconst, genre),
@@ -29,14 +29,12 @@ create table genre (
 
 -- Episode entity in ER Diagram
 -- Data from titles.episode.tsv.gz
-drop table if exists episode;
-create table episode (
+drop table if exists episodes;
+create table episodes (
    'tconst' text primary key not null,
    'parent' text not null,
    'season_number' tinyint,
    'episode_number'smallint,
-   --Below feels like bad design feel free to fix - Nick
-   -- media includes both tconst for episodes and whole series
    foreign key (tconst) references media(tconst),
    foreign key (parent) references media(tconst)
 );
@@ -54,4 +52,56 @@ create table alternate_titles (
    'attributes' text,
    'is_original' boolean,
    foreign key (tconst) references media(tconst)
+);
+
+-- Crew entity in ER Diagram
+-- Data from title.principals.tsv.gz
+-- Includes information if this actor is known for this role
+drop table if exists crew;
+create table crew (
+   'tconst' text not null,
+   'ordering' tinyint not null,
+   'nconst' text not null,
+   'category' text,
+   'job' text,
+   foreign key (tconst) references media(tconst),
+   foreign key (nconst) references person(nconst)
+);
+
+-- Characters composite attribute
+-- Uses data from title.principals.tsv.gz
+drop table if exists characters;
+create table characters (
+   'tconst' text not null,
+   'nconst' text not null,
+   'character' text not null,
+   foreign key (tconst, nconst) references crew(tconst, nconst)
+);
+
+-- Person entity in ER diagram
+-- Data from name.tsv.gz
+drop table if exists person;
+create table person (
+   'nconst' text primary key not null,
+   'primary_name' text not null,
+   'birth_year' smallint,
+   'death_year' smallint
+);
+
+-- Profession composite attribute
+-- Data from name.tsv.gz
+drop table if exists professions;
+create table professions (
+   'nconst' not null,
+   'profession' text not null,
+   foreign key (nconst) references person(nconst)
+);
+
+--Table that lists names and movie titles for movies actors are known for
+--Faster to insert into than boolean value
+drop table if exists known_for;
+create table known_for (
+   'nconst' text not null,
+   'tconst' text not null,
+   foreign key (nconst, tconst) references crew (nconst, tconst)
 );
