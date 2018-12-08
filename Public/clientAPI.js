@@ -30,3 +30,18 @@ API.getFilmsInCountry = (country)=>{
 	})
 	return promise
 }
+API.getFilmsGenreInCountry = (country, genre)=>{
+    var promise = new Promise((res, rej)=>{
+        var xhr = new XMLHttpRequest()
+        xhr.open("GET", API.serverBaseURL+"/filmsGenre/"+country+"/"+genre)
+        xhr.onload = ()=>{
+            if(xhr.status == 200){
+                res(JSON.parse(xhr.response))
+            } else{
+                rej(xhr.status)
+            }
+        }
+        xhr.send()
+    })
+    return promise
+}

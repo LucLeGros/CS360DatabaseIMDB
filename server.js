@@ -56,6 +56,34 @@ app.get('/database/films/:country', function(req, res){
 		}
 	})
 });
+app.get('/database/filmsGenre/:country/:genre', function(req, res){
+	var country = req.params.country
+	var genre = req.params.genre
+	var sql = 	`SELECT DISTINCT
+					a.title, m.start_year
+				FROM
+					media AS m
+					INNER JOIN alternate_titles AS a USING (tconst)
+					INNER JOIN alternate_titles As o USING (tconst, title)
+				WHERE
+					a.region = '${country}'
+					AND o.is_original = 1
+					AND a.title = o.title
+					AND tconst IN (
+						SELECT tconst
+						FROM genres
+						WHERE genre = '${genre}'
+					);`
+
+	db.all(sql, callback = (err, result)=>{
+		console.log(sql)
+		if (err) {res.status(400).send()}
+		else{
+			console.log(result)
+			res.status(200).send(JSON.stringify(result))
+		}
+	})
+});
 
 
 let db = new sqlite3.Database(__dirname + "/cs360_ass2_min.db", (err)=>{
