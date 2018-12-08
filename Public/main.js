@@ -23,7 +23,6 @@ function colorWorldMap(){
 }
 function onclickFindFilmsDescription(e, id, mapElem, textElem) {
 	getFilmForCountry(id)//filmDescription has been computed
-        
 }
 
 function computeMapFilmDensity(map){
