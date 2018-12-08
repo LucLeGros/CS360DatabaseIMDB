@@ -1,6 +1,5 @@
 var newData
-//map[myKey1] = myObj1;
-var filmDescription = []
+var MAX_SIZE = 250
 
 
 $(".container").mapael({
@@ -83,13 +82,21 @@ function getFilmForCountry(id){//i don't know what form the result will be in
     
     API.getFilmsInCountry(id).then(result =>{
         filmDescription = ""
-        result.forEach(key => filmDescription+=(key.title + '\n'))
+        var size = 0
+        result.forEach(key => {
+            filmDescription+=(key.title + '\t' + '\t' + key.start_year + '\n')
+            size +=4
+        })
+        if(size == 0){
+             filmDescription = "No films in this country"
+        }
         document.getElementById("films").value = filmDescription;
-        document.getElementById("films").readOnly = true;        
+        document.getElementById("films").readOnly = true;  
+        document.getElementById("films").style.height= Math.clamp(size,60,MAX_SIZE)+"px"
     })       
 }
 //expand textarea
-autosize(document.getElementById("films"))
+
 
 
 
