@@ -56,7 +56,7 @@ app.get('/database/films/:country', function(req, res){
 		}
 	})
 });
-app.get('/database/filmsGenre/:country/:genre', function(req, res){
+app.get('/database/films/:country/:genre', function(req, res){
 	var country = req.params.country
 	var genre = req.params.genre
 	var sql = 	`SELECT DISTINCT
