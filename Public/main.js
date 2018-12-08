@@ -1,5 +1,6 @@
 var newData
 var MAX_SIZE = 250
+var PADDING = 80
 
 
 $(".container").mapael({
@@ -84,14 +85,18 @@ function getFilmForCountry(id){//i don't know what form the result will be in
         filmDescription = ""
         var size = 0
         result.forEach(key => {
-            filmDescription+=(key.title + '\t' + '\t' + key.start_year + '\n')
+            filmDescription+=(key.title.padEnd(PADDING,' ') + key["start_year"] + '\n')
             size +=4
         })
+        var start = ""
         if(size == 0){
              filmDescription = "No films in this country"
+        } else {
+            start = (result.length + " films in " + id).padEnd(PADDING,' ') + "Year" + '\n'
         }
-        document.getElementById("films").value = filmDescription;
+        console.log(document.getElementById("films").value)
+        document.getElementById("films").value = start + filmDescription;
         document.getElementById("films").readOnly = true;  
-        document.getElementById("films").style.height= Math.clamp(size,60,MAX_SIZE)+"px"
+        document.getElementById("films").style.height= Math.min(Math.max(size,60),MAX_SIZE)+"px"
     })       
 }
