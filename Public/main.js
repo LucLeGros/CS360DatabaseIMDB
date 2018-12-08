@@ -86,13 +86,10 @@ function getFilmForCountry(id){//i don't know what form the result will be in
         result.forEach(key => filmDescription+=(key.title + '\n'))
         document.getElementById("films").value = filmDescription;
         document.getElementById("films").readOnly = true;        
-       
-    })
-
-
-
-            
+    })       
 }
+//expand textarea
+autosize(document.getElementById("films"))
 
 
 
