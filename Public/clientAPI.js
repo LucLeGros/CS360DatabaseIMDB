@@ -6,7 +6,7 @@ API.getFilmsPerCountry = ()=>{
 		xhr.open("GET", API.serverBaseURL+"/filmsPerCountry")
 		xhr.onload = ()=>{
             if(xhr.status == 200){
-                res(xhr.response)
+                res(JSON.parse(xhr.response))
             } else{
                 rej(xhr.status)
             }
