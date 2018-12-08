@@ -78,8 +78,8 @@ function getMapFilmDensity(){
     return promise
 }
 
-function getFilmForCountry(id){//i don't know what form the result will be in 
-    
+function getFilmForCountry(id){//i don't know what form the result will be in
+
     API.getFilmsInCountry(id).then(result =>{
         filmDescription = ""
         var size = 0
@@ -95,10 +95,3 @@ function getFilmForCountry(id){//i don't know what form the result will be in
         document.getElementById("films").style.height= Math.clamp(size,60,MAX_SIZE)+"px"
     })       
 }
-//expand textarea
-
-
-
-
-
-
