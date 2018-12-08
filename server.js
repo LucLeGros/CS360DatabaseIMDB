@@ -61,8 +61,10 @@ app.get('/database/films/:country', function(req, res){
 let db = new sqlite3.Database(__dirname + "/cs360_ass2_min.db", (err)=>{
 	if(err){
 		console.log(err)
+	} else {
+		console.log("Connected to database")
 	}
-	console.log("Connected to database")
+	
 })
 
 app.listen(port, ()=>{
