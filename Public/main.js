@@ -84,11 +84,7 @@ function getFilmForCountry(id){//i don't know what form the result will be in
     return API.getFilmsInCountry(id).then(result =>{
         filmDescription = []
         result.forEach(key => filmDescription.push(key.title))
-
-
     })
-
-
 }
 
 function populate(){
@@ -100,8 +96,3 @@ function populate(){
     document.getElementById("films").value = text;
     document.getElementById("films").readOnly = true;
 }
-
-
-
-
-
