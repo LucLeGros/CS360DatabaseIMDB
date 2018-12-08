@@ -22,17 +22,16 @@ function colorWorldMap(){
     getMapFilmDensity().then( map => computeMapFilmDensity(map))//map has been computed
 }
 function onclickFindFilmsDescription(e, id, mapElem, textElem) {
-	getFilmForCountry(id).then(populate)//filmDescription has been computed
-
+	getFilmForCountry(id)//filmDescription has been computed
 }
 
 function computeMapFilmDensity(map){
     newData = {
             'areas': $(".container").data('mapael').areas
         };
+
     var maxFilms = Math.max(...map.values())
 
-    //var maxFilms =
     Object.keys(newData.areas).forEach(key => {
             var country = newData.areas[key];//finding what is the country key might not be this I can't remember
 
@@ -46,8 +45,9 @@ function computeMapFilmDensity(map){
 
 
 //creates color that ranges from white to blue (blue is high film density)
+
 function getColor(numberOfFilms, maxFilms){//we will assume the min film is 0 which is probably the case
-    if(maxFilms == 0){
+    if(maxFilms == 0 || numberOfFilms == 0){
         return "#ffffff"
     }
     var blue = "ff";
@@ -81,18 +81,10 @@ function getMapFilmDensity(){
 
 function getFilmForCountry(id){//i don't know what form the result will be in
 
-    return API.getFilmsInCountry(id).then(result =>{
-        filmDescription = []
-        result.forEach(key => filmDescription.push(key.title))
+    API.getFilmsInCountry(id).then(result =>{
+        filmDescription = ""
+        result.forEach(key => filmDescription+=(key.title + '\n'))
+        document.getElementById("films").value = filmDescription;
+        document.getElementById("films").readOnly = true;
     })
-}
-
-function populate(){
-    var text = ""
-    for(var i = 0; i < filmsForCountry.length; ++i){
-        var film = filmsForCountry[i] + '\n'
-        text += film
-    }
-    document.getElementById("films").value = text;
-    document.getElementById("films").readOnly = true;
 }

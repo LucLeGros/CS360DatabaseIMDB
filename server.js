@@ -37,11 +37,11 @@ app.get('/database/filmsPerCountry', function(req, res){
 app.get('/database/films/:country', function(req, res){
 	var country = req.params.country
 	var sql = 	`SELECT DISTINCT
-					a.tconst, a.title
+					a.title, m.start_year
 				FROM
-					alternate_titles AS a
-					INNER JOIN alternate_titles As o
-					USING (tconst, title)
+					media AS m
+					INNER JOIN alternate_titles AS a ON m.tconst = a.tconst
+					INNER JOIN alternate_titles As o USING (tconst, title)
 				WHERE
 					a.region = '${country}'
 					AND o.is_original = 1
@@ -64,7 +64,7 @@ let db = new sqlite3.Database(__dirname + "/cs360_ass2_min.db", (err)=>{
 	} else {
 		console.log("Connected to database")
 	}
-	
+
 })
 
 app.listen(port, ()=>{
