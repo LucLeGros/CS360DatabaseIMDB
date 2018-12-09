@@ -109,3 +109,11 @@ def populate_db ():
                 if limit == 150000:
                     break
         db.commit()
+
+#function to clear alternate title tuples where the alterate title is the origial title
+def clear_alternates ():
+    db = get_db()
+    db.cursor().execute("""DELETE
+                            FROM alternate_titles
+                            WHERE region IN ('XSI', 'XPI', 'XWG', 'XWW', 'XYU');""")
+    db.commit()

@@ -40,7 +40,7 @@ app.get('/database/films/:country', function(req, res){
 					a.title, m.start_year
 				FROM
 					media AS m
-					INNER JOIN alternate_titles AS a ON m.tconst = a.tconst
+					INNER JOIN alternate_titles AS a USING (tconst)
 					INNER JOIN alternate_titles As o USING (tconst, title)
 				WHERE
 					a.region = '${country}'

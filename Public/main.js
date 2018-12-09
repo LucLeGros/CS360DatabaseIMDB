@@ -1,7 +1,8 @@
 var newData
 var MAX_SIZE = 250
 var PADDING = 80
-
+var genre = "All"
+var country = null
 
 $(".container").mapael({
     map : {
@@ -80,23 +81,52 @@ function getMapFilmDensity(){
 }
 
 function getFilmForCountry(id){//i don't know what form the result will be in
-
-    API.getFilmsInCountry(id).then(result =>{
-        filmDescription = ""
-        var size = 0
-        result.forEach(key => {
-            filmDescription+=(key.title.padEnd(PADDING,' ') + key["start_year"] + '\n')
-            size +=4
+    country = id
+    if(genre == "All"){
+        API.getFilmsInCountry(id).then(result =>{
+            filmDescription = ""
+            var size = 0
+            result.forEach(key => {
+                filmDescription+=(key.title.padEnd(PADDING,' ') + key["start_year"] + '\n')
+                size +=4
+            })
+            var start = ""
+            if(size == 0){
+                 filmDescription = "No films in this country"
+            } else {
+                start = (result.length + " films in " + id).padEnd(PADDING,' ') + "Year" + '\n'
+            }
+            console.log(document.getElementById("films").value)
+            document.getElementById("films").value = start + filmDescription;
+            document.getElementById("films").readOnly = true;
+            document.getElementById("films").style.height= Math.min(Math.max(size,60),MAX_SIZE)+"px"
         })
-        var start = ""
-        if(size == 0){
-             filmDescription = "No films in this country"
-        } else {
-            start = (result.length + " films in " + id).padEnd(PADDING,' ') + "Year" + '\n'
-        }
-        console.log(document.getElementById("films").value)
-        document.getElementById("films").value = start + filmDescription;
-        document.getElementById("films").readOnly = true;  
-        document.getElementById("films").style.height= Math.min(Math.max(size,60),MAX_SIZE)+"px"
-    })       
+    } else{
+        API.getFilmsGenreInCountry(id, genre).then(result =>{
+            filmDescription = ""
+            var size = 0
+            result.forEach(key => {
+                filmDescription+=(key.title.padEnd(PADDING,' ') + key["start_year"] + '\n')
+                size +=8
+            })
+            var start = ""
+            if(size == 0){
+                 filmDescription = "No "+ genre +" films in this country"
+            } else {
+                start = (result.length + " " + genre + " films in " + id).padEnd(PADDING,' ') + "Year" + '\n'
+            }
+            console.log(document.getElementById("films").value)
+            document.getElementById("films").value = start + filmDescription;
+            document.getElementById("films").readOnly = true;
+            document.getElementById("films").style.height= Math.min(Math.max(size,60),MAX_SIZE)+"px"
+        })
+    }
+
+}
+
+function changeGenre(){
+    genre = document.getElementById("dropdown").value
+    if(country != null){
+        getFilmForCountry(country)
+    }
 }
